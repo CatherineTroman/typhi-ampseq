@@ -1,0 +1,26 @@
+##start
+echo "Sample	Final call	Final call support	Subclade	Clade	Primary Clade	Support Subclade	Support Clade	Support Primary Clade	Number of SNPs	Called AMR mutations" > genotype.tab
+
+for file in binned*.fastq ; do 
+
+ if test "$(wc -l < $file)" -lt 800 ; then 
+   echo ""${file/%.fastq}" "	Not enough reads"" >> genotype.tab
+ else 
+   ## align amplicons to CT18
+
+    minimap2 -ax map-ont /home/cat/genotyphi/CT18.fasta $file > mapped.sam
+    samtools view -b mapped.sam > temp.bam 
+    samtools sort temp.bam > mapped.bam
+
+   ##genotyphi
+
+    python /home/cat/genotyphi/genotyphi_amp.py --mode bam --bam mapped.bam --ref /home/cat/genotyphi/CT18.fasta --ref_id CT18 --output "${file/%.fastq/_genotype.txt}"
+
+    sed -n "s/mapped.bam.vcf/${file/%.fastq}/p" "${file/%.fastq/_genotype.txt}" >> genotype.tab 
+
+    ## wc -l "${file/%fastq/csv}" >> genotype.tab
+
+    rm "${file/%.fastq/_genotype.txt}" mapped.sam temp.bam mapped.bam genotyphi.bed mapped.bam.bai mapped.bam.vcf
+ fi
+done
+
