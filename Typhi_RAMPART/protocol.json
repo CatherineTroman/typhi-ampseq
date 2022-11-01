@@ -1,0 +1,13 @@
+{
+    "name": "S. Typhi procotol v1.0",
+    "description": "Amplicon based sequencing of S. Typhi strains",
+    "url": "NA",
+    "displayOptions": {
+        "referencesLabel":"display_name"
+        },
+    "annotationOptions":{
+        "minimum_identity": "90",
+        "reference_fields":"display_name[display_name]"
+        }
+    
+  }
